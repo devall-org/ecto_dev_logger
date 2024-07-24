@@ -7,6 +7,8 @@ defmodule Ecto.DevLogger do
   Also, it highlights db time to make slow queries noticeable. Source table and inlined bindings are highlighted as well.
   """
 
+  @level Application.compile_env(:ecto_dev_logger, :level, :debug)
+
   require Logger
 
   @type option :: {:log_repo_name, boolean()} | {:ignore_event, (metadata :: map() -> boolean())}
@@ -91,7 +93,8 @@ defmodule Ecto.DevLogger do
       repo_adapter = metadata[:repo].__adapter__()
       before_inline_callback = config[:before_inline_callback] || (&Function.identity/1)
 
-      Logger.debug(
+      Logger.log(
+        @level,
         fn ->
           query
           |> before_inline_callback.()
